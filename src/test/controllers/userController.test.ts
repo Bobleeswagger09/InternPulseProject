@@ -258,10 +258,9 @@ describe("updateUserById", () => {
     jest.clearAllMocks(); // Clear previous mocks
   });
 
-
   it("should update the user when a valid ID and name are provided", async () => {
     const req = {
-      params: { id: "valid-id" },
+      params: { id: "66c69ccfb06f2844628d97ad" },
       body: { name: "New Name" },
     } as unknown as Request;
     const res = {
@@ -272,13 +271,16 @@ describe("updateUserById", () => {
 
     // Mock the findOne method to return an existing user
     mockFindOne.mockResolvedValue({
-      _id: new ObjectId("valid-id"),
+      _id: new ObjectId("66c69ccfb06f2844628d97ad"),
       name: "Old Name",
     });
 
     // Mock the findOneAndUpdate method to return the updated user
     mockFindOneAndUpdate.mockResolvedValue({
-      value: { _id: new ObjectId("valid-id"), name: "New Name" },
+      value: {
+        _id: new ObjectId("66c69ccfb06f2844628d97ad"),
+        name: "New Name",
+      },
     });
 
     await updateUserById(req, res, next);
@@ -286,14 +288,14 @@ describe("updateUserById", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       message: "User updated successfully",
-      user: { _id: new ObjectId("valid-id"), name: "New Name" },
+      user: { _id: new ObjectId("66c69ccfb06f2844628d97ad"), name: "New Name" },
     });
     expect(next).not.toHaveBeenCalled(); // Ensure next is not called
   });
 
   it("should return 400 if the ID is invalid", async () => {
     const req = {
-      params: { id: "invalid-id" },
+      params: { id: "hfhdfjhferwf@@#@2111" },
       body: { name: "New Name" },
     } as unknown as Request;
     const res = {
@@ -311,7 +313,7 @@ describe("updateUserById", () => {
 
   it("should return 404 if the user is not found", async () => {
     const req = {
-      params: { id: "valid-id" },
+      params: { id: "66c69ccfb06f2844628d97ad" },
       body: { name: "New Name" },
     } as unknown as Request;
     const res = {
@@ -332,7 +334,7 @@ describe("updateUserById", () => {
 
   it("should call next with an error if an exception occurs", async () => {
     const req = {
-      params: { id: "valid-id" },
+      params: { id: "66c6cf8eec51877630ac1e02" },
       body: { name: "New Name" },
     } as unknown as Request;
     const res = {
