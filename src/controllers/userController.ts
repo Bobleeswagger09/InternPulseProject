@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ObjectId } from "mongodb";
 import { usersCollection } from "../config/db"; // Adjust the import path as necessary
 
+// This function is responsible for creating a new user
 export const createUser = async (
   req: Request,
   res: Response,
@@ -14,9 +15,10 @@ export const createUser = async (
       res.status(400).json({ message: "Name is required" });
       return; // Ensure the function exits here
     }
-
+    // insert a new user to the data base
     const result = await usersCollection.insertOne({ name });
 
+    // check if insertion was successfull
     if (!result.acknowledged) {
       res.status(500).json({ message: "Failed to create user" });
       return;
@@ -31,19 +33,21 @@ export const createUser = async (
   }
 };
 
+// This function retrieves a user from the database based on their name.
 export const getUserByName = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
+    // It looks for the user's name in the query parameters of the request
     const { name } = req.query;
 
     if (!name) {
       res.status(400).json({ message: "Name is required" });
       return;
     }
-
+    // It searches for a user in the database collection to check for the name
     const user = await usersCollection.findOne({ name: String(name) });
 
     if (!user) {
@@ -63,13 +67,16 @@ export const getUserById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // It gets the user ID from the URL path
     const { id } = req.params;
 
+    // It checks if the ID is a valid MongoDB ObjectId using ObjectId.isValid(id).
     if (!ObjectId.isValid(id)) {
       res.status(400).json({ message: "Invalid user ID" });
       return;
     }
 
+    // Finds the User
     const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
     if (!user) {
@@ -109,7 +116,6 @@ export const updateUserByName = async (
     // If no document was modified, the user was not found
     if (result.matchedCount === 0) {
       res.status(404).json({ message: "User not found" });
-      return;
     }
 
     res.status(200).json({ message: "User updated successfully" });
@@ -129,7 +135,7 @@ export const updateUserById = async (
 
     // Log the received ID and new name
     console.log(`Received ID: ${id}, New Name: ${name}`);
-
+    //It checks if the provided ID is a valid MongoDB ObjectId
     if (!ObjectId.isValid(id)) {
       res.status(400).json({ message: "Invalid user ID" });
       return;
