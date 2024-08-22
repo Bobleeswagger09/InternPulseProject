@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/users",
+      "dest": "/src/routes/userRoutes.js"
+    },
+    {
+      "src": "/api/users/(?<id>[^/]+)",
+      "dest": "/src/routes/userRoutes.js"
+    },
+    {
+      "src": "/api/users/name",
+      "dest": "/src/routes/userRoutes.js"
+    },
+    {
+      "src": "/",
+      "dest": "/src/index.js"
+    }
+  ],
+  "env": {
+    "MONGO_URI": "@mongo-uri"
+  }
+}
